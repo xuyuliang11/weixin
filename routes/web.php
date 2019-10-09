@@ -146,12 +146,11 @@ Route::get('zuo/code','zuoye\CrontabController@code');
 Route::get('wei','WeiController@wei');
 
 
-
-Route::get('h_do_login','hadmin\LoginController@h_do_login');
-Route::get('h_login','hadmin\LoginController@h_login');
+Route::any('h_login','hadmin\LoginController@h_login');
+Route::any('h_do_login','hadmin\LoginController@h_do_login');
 Route::get('bdzh','hadmin\LoginController@bdzh');
+Route::post('do_bdzh','hadmin\LoginController@do_bdzh');
 Route::get('send','hadmin\LoginController@send');
-Route::get('do_bdzh','hadmin\LoginController@do_bdzh');
 Route::get('index/index','hadmin\AdminController@index');
 
 

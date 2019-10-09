@@ -24,19 +24,23 @@ class LoginController extends Controller
     }
     public function h_do_login()
     {
+
         $name=request('name');
+        // dd($name);
         $password=request('password');
         //用户名错误 密码错误   用户名或密码错误
         $data=DB::table('user')->where(['name'=>$name,'password'=>$password])->first();
        // dd($data);
-        if(!data){
-            //报错登录失败
-            die;
+        if(!$data){
+         	return redirect('h_login');
+        }else{
+        	// $data=$data->toArray();
+	        //登录成功 存到session
+	        session(['data'=>$data]);
+			return redirect('index/index');
         }
-        $data=$data->toArray();
-        //登录成功 存到session
-        session(['data'=>$data]);
-        return redirect('hadmin/index');
+       
+        
     }
 
     public function send(request $request)
@@ -81,7 +85,7 @@ class LoginController extends Controller
 
     public function bdzh()
     {
-        return view('login.bdzh');
+        return view('jiekou/bdzh');
     }
     public function do_bdzh(request $request)
     {
