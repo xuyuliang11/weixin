@@ -17,7 +17,7 @@ class MenuController extends Controller
 
     public function menu_list()
     {
-        echo 1111;
+        // echo 1111;
         $data = DB::table('menu')->get();
         return view('menu/list', ['data' => $data]);
     }

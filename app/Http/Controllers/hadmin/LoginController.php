@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\model\wechat;
 use App\Tools\Tools;
 use DB;
+use Illuminate\Support\Facades\Cache;
 class LoginController extends Controller
 {
      public $tools;
@@ -22,24 +23,33 @@ class LoginController extends Controller
     {
         return view('jiekou.h_login');
     }
-    public function h_do_login()
+    public function h_do_login(request $request)
     {
 
         $name=request('name');
         // dd($name);
         $password=request('password');
-        //用户名错误 密码错误   用户名或密码错误
-        $data=DB::table('user')->where(['name'=>$name,'password'=>$password])->first();
-       // dd($data);
-        if(!$data){
-         	return redirect('h_login');
-        }else{
-        	// $data=$data->toArray();
-	        //登录成功 存到session
-	        session(['data'=>$data]);
-			return redirect('index/index');
+        $code = $request ->input('code');
+//        dd($code);
+        $value = Cache::get('code'.$name);
+//         dd($value);/
+        // $red = session('code');
+        // dd($red);
+        if(empty($code)){
+            echo "<script>alert('验证码不为空');location.href='h_login';</script>";die;
         }
-       
+        if($value != $code){
+            echo "<script>alert('验证码不正确');location.href='h_login';</script>";die;
+        }
+        //验证用户名和密码是否正确
+        $bandData = DB::table('user')->where(['name'=>$name,'password'=>$password])->first();
+        if (!$bandData) {
+            //报错
+            echo "<script>alert('用户名密码错误');location.href='/h_login';</script>";
+        }else{
+            //登陆成功
+            echo "<script>alert('登陆成功');location.href='index/index';</script>";
+        }
         
     }
 
@@ -53,6 +63,10 @@ class LoginController extends Controller
         $password=$request->input('password');
         //发送验证码 4位 6位
         $code=rand(1000,9999);
+        //拼接
+        $rd = "code".$name;
+        // 存入缓存 Cache::put('key', 'value', $seconds);
+        $data = Cache::put($rd,$code,60);
         $url = 'https://api.weixin.qq.com/cgi-bin/message/template/send?access_token='.$this->tools->get_wechat_access_token();
 //        dd($url);
         //参数
@@ -85,24 +99,27 @@ class LoginController extends Controller
 
     public function bdzh()
     {
-        return view('jiekou/bdzh');
+        return view('jiekou.bdzh');
     }
-    public function do_bdzh(request $request)
+        public function do_bdzh(request $request)
     {
         $name = request('name');
+       // dd($name);
         $password = request('password');
-        // sdd($password);
-        $adminInfo = DB::table('h_login')->where(['name'=>$name,'password'=>$password])->first();
-        // dd($adminInfo);
+       // dd($password);
+
+
+        $adminInfo = DB::table('user')->where(['name'=>$name,'password'=>$password])->first();
+       // dd($adminInfo);
         if(!$adminInfo){
-            echo json_encode(['ret'=>0,'msg'=>'用户名或密码错误']);die;
+            echo '用户名或密码错误';die;
         }
         $openid = wechat::getOpenid();
-        DB::table('h_login')->where(['name'=>$name,'password'=>$password])->update([
+//        var_dump($openid);
+        DB::table('user')->where(['name'=>$name,'password'=>$password])->update([
             'openid'=>$openid
         ]);
         $adminInfo->openid = $openid;
-//        $adminInfo->save();
         echo "<script>alert('绑定账号成功');location.href='h_login';</script>";
     }
 

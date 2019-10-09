@@ -148,8 +148,8 @@ Route::get('wei','WeiController@wei');
 
 Route::any('h_login','hadmin\LoginController@h_login');
 Route::any('h_do_login','hadmin\LoginController@h_do_login');
-Route::get('bdzh','hadmin\LoginController@bdzh');
-Route::post('do_bdzh','hadmin\LoginController@do_bdzh');
+Route::any('bdzh','hadmin\LoginController@bdzh');
+Route::any('do_bdzh','hadmin\LoginController@do_bdzh');
 Route::get('send','hadmin\LoginController@send');
 Route::get('index/index','hadmin\AdminController@index');
 

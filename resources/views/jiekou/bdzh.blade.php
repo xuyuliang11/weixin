@@ -4,6 +4,8 @@
     <div style="margin-top:6%">
         <h2 align="center">绑定管理员账号</h2>
     <form class="form-horizontal" action="{{url('do_bdzh')}}" method="post">
+
+        
         <div class="form-group">
             <label for="inputEmail3" class="col-sm-2 control-label">用户名</label>
             <div class="col-sm-10">
